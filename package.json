@@ -131,5 +131,9 @@
     "webpack": "^2.3.0",
     "whatwg-fetch": "^0.11.0",
     "phenomic": "^0.21.0"
+  },
+  "dependencies": {
+    "auth0-lock": "^10.14.0",
+    "redux-thunk": "^2.2.0"
   }
 }

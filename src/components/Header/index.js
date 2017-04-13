@@ -7,46 +7,55 @@ import { actions as Actions } from '../../redux.js';
 
 import styles from "./index.css";
 
-const Header = ({ actions, user }, { metadata: { title } }) => {
-  return (
-    <header className={styles.header}>
-      <nav className={styles.nav}>
+const Header = React.createClass({
+  propTypes: {
+    actions: PropTypes.object,
+    user: PropTypes.object,
+  },
 
-        <h1>
-          <Link
-            className={styles.link}
-            to={"/"}
-          >
-            {title}
-          </Link>
-        </h1>
+  render() {
+    const { actions, user } = this.props;
+    const { metadata: { title } } = this.context;
 
-      </nav>
+    return (
+      <header className={styles.header}>
+        <nav className={styles.nav}>
 
-      <div className={styles.user}>
-        <button
-          onClick={() => {
-            if (user.loggedin) {
-              actions.userLogout();
-            }
-            else {
-              actions.userLogin();
-            }
-          }}>
-          {(user.loggedin) ? 'sign out' : 'sign in'}
-        </button>
-      </div>
-    </header>
-  )
-}
+          <h1>
+            <Link
+              className={styles.link}
+              to={"/"}
+            >
+              {title}
+            </Link>
+          </h1>
+
+        </nav>
+
+        <div className={styles.user}>
+          <div>
+            {user.state}
+          </div>
+
+          <button
+            onClick={() => {
+              if (user.loggedin) {
+                actions.userLogout();
+              }
+              else {
+                actions.userLogin();
+              }
+            }}>
+            {(user.loggedin) ? 'sign out' : 'sign in'}
+          </button>
+        </div>
+      </header>
+    )
+  },
+})
 
 Header.contextTypes = {
   metadata: PropTypes.object.isRequired,
-}
-
-Header.propTypes = {
-  actions: PropTypes.object,
-  user: PropTypes.object,
 }
 
 const mapStateToProps = state => ({

@@ -1,4 +1,5 @@
 import { userState } from './constants';
+import * as api from './authentication';
 
 /* Actions */
 
@@ -6,11 +7,14 @@ const USER_LOGOUT = 'phenomic-bones/user/logout'
 
 const USER_AUTHENTICATE = 'phenomic-bones/user/authenticate'
 const USER_AUTHENTICATING = 'phenomic-bones/user/authenticating'
+const USER_AUTHENTICATION_ERROR = 'phenomic-bones/user/authenticationError'
+const USER_AUTHENTICATION_FAILED = 'phenomic-bones/user/authenticationFailed'
 
 /* Reducers */
 
 const initialState = {
     loggedin: false,
+    profile: null,
     state: userState.NOT_AUTHENTICATED,
 }
 
@@ -19,6 +23,7 @@ export const user = (state = initialState, action) => {
         return {
             ...state,
             loggedin: true,
+            profile: action.profile,
             state: userState.AUTHENTICATED,
         }
     }
@@ -28,10 +33,23 @@ export const user = (state = initialState, action) => {
             state: userState.AUTHENTICATING,
         }
     }
+    else if (action.type === USER_AUTHENTICATION_ERROR) {
+        return {
+            ...state,
+            state: userState.ERROR_AUTHENTICATING,
+        }
+    }
+    else if (action.type === USER_AUTHENTICATION_FAILED) {
+        return {
+            ...state,
+            state: userState.NOT_AUTHENTICATED,
+        }
+    }
     else if (action.type === USER_LOGOUT) {
         return {
             ...state,
             loggedin: false,
+            profile: null,
             state: userState.NOT_AUTHENTICATED,
         }
     }
@@ -42,9 +60,10 @@ export const user = (state = initialState, action) => {
 
 /* Action Creators */
 
-const userAuthenticate = () => {
+const userAuthenticate = (userProfile) => {
     return {
         type: USER_AUTHENTICATE,
+        profile: userProfile,
     }
 }
 
@@ -54,19 +73,35 @@ const userAuthenticating = () => {
     }
 }
 
+const userAuthenticationError = () => {
+    return {
+        type: USER_AUTHENTICATION_ERROR,
+    }
+}
+
+const userAuthenticationFailed = () => {
+    return {
+        type: USER_AUTHENTICATION_FAILED,
+    }
+}
+
 const userLogout = () => {
     return {
         type: USER_LOGOUT,
     }
 }
 
-const userLogin = (dispatch) => {
+const userLogin = () => {
     return (dispatch) => {
         dispatch(userAuthenticating());
 
-        setTimeout(() => {
-            dispatch(userAuthenticate());
-        }, 1000)
+        api.authenticateUser((userProfile) => {
+            dispatch(userAuthenticate(userProfile));
+        }, (error) => {
+            dispatch(userAuthenticationError(error));
+        }, (error) => {
+            dispatch(userAuthenticationFailed(error));
+        });
     }
 }
 
