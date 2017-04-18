@@ -13,7 +13,6 @@ const USER_AUTHENTICATION_FAILED = 'phenomic-bones/user/authenticationFailed'
 /* Reducers */
 
 const initialState = {
-    loggedin: false,
     profile: null,
     state: userState.NOT_AUTHENTICATED,
 }
@@ -22,7 +21,6 @@ export const user = (state = initialState, action) => {
     if (action.type === USER_AUTHENTICATE) {
         return {
             ...state,
-            loggedin: true,
             profile: action.profile,
             state: userState.AUTHENTICATED,
         }
@@ -48,7 +46,6 @@ export const user = (state = initialState, action) => {
     else if (action.type === USER_LOGOUT) {
         return {
             ...state,
-            loggedin: false,
             profile: null,
             state: userState.NOT_AUTHENTICATED,
         }

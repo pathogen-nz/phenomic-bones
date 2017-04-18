@@ -1,52 +1,32 @@
 import React, { PropTypes } from "react"
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Link } from "phenomic"
 
 import { actions as Actions } from '../../redux.js';
 import { userState } from '../../constants.js';
 
 import styles from "./index.css";
 
-const Header = React.createClass({
+const Protected = React.createClass({
   propTypes: {
     actions: PropTypes.object,
+    children: PropTypes.node.isRequired,
     user: PropTypes.object,
   },
 
   render() {
-    const { actions, user } = this.props;
-    const { metadata: { title } } = this.context;
+    const { actions, children, user } = this.props;
 
-    return (
-      <header className={styles.header}>
-        <nav className={styles.nav}>
-
-          <h1>
-            <Link
-              to={"/"}
-            >
-              {title}
-            </Link>
-          </h1>
-
-          <h3>
-            <Link
-              to={'/profile'}>
-              {'profile'}
-            </Link>
-          </h3>
-
-        </nav>
-
-        <div className={styles.user}>
-          <div>
-            {user.state}
-          </div>
+    return (user.state !== userState.AUTHENTICATED)
+      ? (
+        <section className={styles.protected}>
+          <h4>
+            {'you must sign in to view this page'}
+          </h4>
 
           <button
             onClick={() => {
-              if (user.state !== userState.AUTHENTICATED) {
+              if (user.state === userState.AUTHENTICATED) {
                 actions.userLogout();
               }
               else {
@@ -55,15 +35,11 @@ const Header = React.createClass({
             }}>
             {(user.state === userState.AUTHENTICATED) ? 'sign out' : 'sign in'}
           </button>
-        </div>
-      </header>
-    )
+        </section>
+      )
+      : children
   },
 })
-
-Header.contextTypes = {
-  metadata: PropTypes.object.isRequired,
-}
 
 const mapStateToProps = state => ({
   user: state.user,
@@ -76,4 +52,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Header)
+)(Protected)

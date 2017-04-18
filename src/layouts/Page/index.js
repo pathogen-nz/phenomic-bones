@@ -6,15 +6,8 @@ import { joinUri } from "phenomic"
 import styles from "./index.css"
 
 const Page = (
-  {
-    __filename,
-    __url,
-    head,
-    children,
-  },
-  {
-    metadata: { pkg },
-  }
+  { __filename, __url, head, children, },
+  { metadata: { pkg }, }
 ) => {
   warning(
     typeof head.title === "string",
@@ -63,6 +56,7 @@ Page.propTypes = {
   __url: PropTypes.string,
   children: PropTypes.node,
   head: PropTypes.object.isRequired,
+  user: PropTypes.object,
 }
 
 Page.contextTypes = {
