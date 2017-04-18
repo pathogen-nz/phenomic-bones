@@ -95,12 +95,16 @@ const userLogin = () => {
     return (dispatch) => {
         dispatch(userAuthenticating());
 
-        api.authenticateUser((userProfile) => {
-            dispatch(userAuthenticate(userProfile));
-        }, (error) => {
-            dispatch(userAuthenticationError(error));
-        }, (error) => {
-            dispatch(userAuthenticationFailed(error));
+        api.authenticateUser({
+            onSuccess: (userProfile) => {
+                dispatch(userAuthenticate(userProfile));
+            },
+            onError: (error) => {
+                dispatch(userAuthenticationError(error));
+            },
+            onFailure: (error) => {
+                dispatch(userAuthenticationFailed(error));
+            }
         });
     }
 }
